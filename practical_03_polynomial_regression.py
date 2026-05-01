@@ -1,6 +1,5 @@
 # ============================================================
 # Practical 3 — Polynomial Regression
-# Moksh Singh (230439) | BSc(Hons) CS, Section B | Sem VI
 # Dataset: load_diabetes() — Regression
 # ============================================================
 
