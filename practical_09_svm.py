@@ -1,6 +1,5 @@
 # ============================================================
 # Practical 9 — SVM Classification
-# Moksh Singh (230439) | BSc(Hons) CS, Section B | Sem VI
 # Dataset: load_breast_cancer() — Classification
 # ============================================================
 
