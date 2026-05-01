@@ -1,6 +1,5 @@
 # ============================================================
 # Practical 11 — Hierarchical (Agglomerative) Clustering
-# Moksh Singh (230439) | BSc(Hons) CS, Section B | Sem VI
 # Dataset: load_breast_cancer() — Unsupervised (labels ignored)
 # ============================================================
 
