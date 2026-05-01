@@ -1,6 +1,5 @@
 # ============================================================
 # Practical 5 — Logistic Regression
-# Moksh Singh (230439) | BSc(Hons) CS, Section B | Sem VI
 # Dataset: load_breast_cancer() — Classification
 # ============================================================
 
