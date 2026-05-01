@@ -1,1 +1,58 @@
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_breast_cancer, load_diabetes
+from sklearn.model_selection import train_test_split, cross_val_score, KFold
+from sklearn.metrics import (mean_squared_error, r2_score,
+    confusion_matrix, accuracy_score, recall_score,
+    f1_score, roc_auc_score)
+from sklearn.preprocessing import StandardScaler
 
+cancer = load_breast_cancer()
+X_clf, y_clf = cancer.data, cancer.target
+
+diabetes = load_diabetes()
+X_reg, y_reg = diabetes.data, diabetes.target
+
+X_clf_train, X_clf_test, y_clf_train, y_clf_test = train_test_split(
+    X_clf, y_clf, test_size=0.2, random_state=42)
+X_reg_train, X_reg_test, y_reg_train, y_reg_test = train_test_split(
+    X_reg, y_reg, test_size=0.2, random_state=42)
+
+scaler = StandardScaler()
+X_clf_train_scaled = scaler.fit_transform(X_clf_train)
+X_clf_test_scaled  = scaler.transform(X_clf_test)
+X_reg_train_scaled = scaler.fit_transform(X_reg_train)
+X_reg_test_scaled  = scaler.transform(X_reg_test)
+
+def evaluate_regression(model, X_train, y_train, X_test, y_test, model_name="Regression Model"):
+    print(f"── {model_name} ──")
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred)
+    r2  = r2_score(y_test, y_pred)
+    print(f"MSE: {mse:.4f} | R2 Score: {r2:.4f}")
+    kf = KFold(n_splits=5, shuffle=True, random_state=42)
+    cv = cross_val_score(model, X_train, y_train, cv=kf, scoring='neg_mean_squared_error')
+    print(f"5-Fold CV MSE: {-cv.mean():.4f}\n")
+
+def evaluate_classification(model, X_train, y_train, X_test, y_test,
+                             model_name="Classification Model", has_proba=True):
+    print(f"── {model_name} ──")
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+    acc         = accuracy_score(y_test, y_pred)
+    error       = 1 - acc
+    recall      = recall_score(y_test, y_pred)
+    specificity = tn / (tn + fp) if (tn + fp) > 0 else 0
+    f1          = f1_score(y_test, y_pred)
+    print(f"Accuracy: {acc:.4f} | Error: {error:.4f}")
+    print(f"TP: {tp} | TN: {tn} | FP: {fp} | FN: {fn}")
+    print(f"Recall: {recall:.4f} | Specificity: {specificity:.4f} | F1: {f1:.4f}")
+    if has_proba:
+        y_prob = model.predict_proba(X_test)[:, 1]
+        auc = roc_auc_score(y_test, y_prob)
+        print(f"AUC: {auc:.4f}")
+    kf = KFold(n_splits=5, shuffle=True, random_state=42)
+    cv = cross_val_score(model, X_train, y_train, cv=kf, scoring='accuracy')
+    print(f"5-Fold CV Accuracy: {cv.mean():.4f}\n")
